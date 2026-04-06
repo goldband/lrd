@@ -719,6 +719,382 @@
                 font-size: 2em;
             }
         }
+
+        /* ===== NO RESPONSE BADGE ===== */
+        .no-response {
+            background: rgba(100, 116, 139, 0.2);
+            color: #94a3b8;
+            border: 1px solid rgba(100, 116, 139, 0.4);
+        }
+
+        /* ===== ADMIN SECTION ===== */
+        .admin-section {
+            margin-bottom: 50px;
+            animation: fadeInScale 0.7s ease-out 0.2s both;
+        }
+
+        .admin-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .admin-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(14, 165, 233, 0.05);
+        }
+
+        .admin-panel-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-add-player {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn-add-player:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .players-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .players-table th {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 0.78em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.3);
+        }
+
+        .players-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+            font-size: 0.9em;
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+
+        .players-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .players-table tr:hover td {
+            background: rgba(14, 165, 233, 0.04);
+        }
+
+        .player-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, #06b6d4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85em;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .player-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .player-cell-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .player-cell-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .player-cell-email {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+        }
+
+        .admin-badge {
+            background: rgba(14, 165, 233, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .player-badge {
+            background: rgba(100, 116, 139, 0.15);
+            color: var(--text-secondary);
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-edit {
+            padding: 7px 14px;
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn-edit:hover {
+            background: rgba(14, 165, 233, 0.2);
+            border-color: var(--accent);
+        }
+
+        .btn-delete {
+            padding: 7px 14px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--danger);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 16px;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(2, 6, 23, 0.85);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.open {
+            display: flex;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .modal-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.4em;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 28px;
+        }
+
+        .modal-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .modal-fields label {
+            font-size: 0.8em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .modal-fields input, .modal-fields select {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95em;
+            transition: all 0.2s ease;
+        }
+
+        .modal-fields input:focus, .modal-fields select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12);
+        }
+
+        .modal-fields select option {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel {
+            padding: 11px 22px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-save {
+            padding: 11px 22px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.3);
+        }
+
+        /* ===== PHOTO SECTION ===== */
+        .photo-section {
+            margin-top: 60px;
+            margin-bottom: 50px;
+            animation: fadeInScale 0.7s ease-out 0.3s both;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 20px;
+        }
+
+        .photo-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .photo-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.15);
+        }
+
+        .photo-avatar-large {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, #06b6d4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.4em;
+            color: white;
+            margin: 0 auto 14px;
+            border: 3px solid rgba(14, 165, 233, 0.3);
+        }
+
+        .photo-player-name {
+            font-weight: 700;
+            font-size: 0.9em;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .photo-player-role {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
@@ -786,12 +1162,67 @@
                 </div>
             </header>
 
+            <!-- Games Schedule -->
             <section class="schedule-section">
                 <h2 class="section-title">📅 Upcoming Games</h2>
                 <div class="schedule-grid" id="scheduleGrid">
                     <!-- Games populated here -->
                 </div>
             </section>
+
+            <!-- Admin: Player Management (only shown to admins) -->
+            <section class="admin-section" id="adminSection" style="display:none;">
+                <h2 class="section-title">🛠 Player Management</h2>
+                <div class="admin-panel">
+                    <div class="admin-panel-header">
+                        <span class="admin-panel-title">Registered Players</span>
+                        <button class="btn-add-player" onclick="app.openAddPlayer()">+ Add Player</button>
+                    </div>
+                    <div id="adminPlayersTable">
+                        <!-- Table populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Photo Section (moved to end) -->
+            <section class="photo-section" id="photoSection">
+                <h2 class="section-title">👥 Team Roster</h2>
+                <div class="photo-grid" id="photoGrid">
+                    <!-- Photos populated by JS -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- ===== PLAYER MODAL ===== -->
+    <div class="modal-overlay" id="playerModal">
+        <div class="modal">
+            <div class="modal-title" id="modalTitle">Add Player</div>
+            <div class="modal-fields">
+                <div>
+                    <label>Full Name</label>
+                    <input type="text" id="modalName" placeholder="John Doe">
+                </div>
+                <div>
+                    <label>Email</label>
+                    <input type="email" id="modalEmail" placeholder="john@example.com">
+                </div>
+                <div>
+                    <label>Password</label>
+                    <input type="password" id="modalPassword" placeholder="Min 4 characters">
+                </div>
+                <div>
+                    <label>Role</label>
+                    <select id="modalRole">
+                        <option value="player">Player</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="app.closeModal()">Cancel</button>
+                <button class="btn-save" onclick="app.savePlayer()">Save Player</button>
+            </div>
         </div>
     </div>
 
@@ -801,7 +1232,8 @@
                 this.currentUser = null;
                 this.games = [];
                 this.players = [];
-                this.availabilities = {}; // { gameId: { playerId: status } }
+                this.availabilities = {};
+                this.editingPlayerId = null;
                 this.init();
             }
 
@@ -811,6 +1243,7 @@
                 this.generateGames();
             }
 
+            // ===== AUTH =====
             checkLogin() {
                 const savedUser = localStorage.getItem('leagueUser');
                 if (savedUser) {
@@ -822,9 +1255,9 @@
             }
 
             toggleAuthMode() {
-                document.getElementById('loginMode').style.display = 
+                document.getElementById('loginMode').style.display =
                     document.getElementById('loginMode').style.display === 'none' ? 'block' : 'none';
-                document.getElementById('signupMode').style.display = 
+                document.getElementById('signupMode').style.display =
                     document.getElementById('signupMode').style.display === 'none' ? 'block' : 'none';
                 this.clearError();
             }
@@ -833,32 +1266,12 @@
                 const name = document.getElementById('signupName').value.trim();
                 const email = document.getElementById('signupEmail').value.trim();
                 const password = document.getElementById('signupPassword').value;
-
-                if (!name || !email || !password) {
-                    this.showError('All fields are required');
-                    return;
-                }
-
-                if (password.length < 4) {
-                    this.showError('Password must be at least 4 characters');
-                    return;
-                }
-
-                const existingUser = this.players.find(p => p.email === email);
-                if (existingUser) {
-                    this.showError('Email already registered');
-                    return;
-                }
-
-                const newPlayer = {
-                    id: 'player_' + Date.now(),
-                    name,
-                    email,
-                    password
-                };
-
+                if (!name || !email || !password) { this.showError('All fields are required'); return; }
+                if (password.length < 4) { this.showError('Password must be at least 4 characters'); return; }
+                if (this.players.find(p => p.email === email)) { this.showError('Email already registered'); return; }
+                const newPlayer = { id: 'player_' + Date.now(), name, email, password, role: 'player' };
                 this.players.push(newPlayer);
-                this.currentUser = { id: newPlayer.id, name, email };
+                this.currentUser = { id: newPlayer.id, name, email, role: 'player' };
                 this.saveData();
                 localStorage.setItem('leagueUser', JSON.stringify(this.currentUser));
                 this.showApp();
@@ -867,19 +1280,10 @@
             login() {
                 const email = document.getElementById('loginEmail').value.trim();
                 const password = document.getElementById('loginPassword').value;
-
-                if (!email || !password) {
-                    this.showError('Email and password required');
-                    return;
-                }
-
+                if (!email || !password) { this.showError('Email and password required'); return; }
                 const player = this.players.find(p => p.email === email && p.password === password);
-                if (!player) {
-                    this.showError('Invalid email or password');
-                    return;
-                }
-
-                this.currentUser = { id: player.id, name: player.name, email: player.email };
+                if (!player) { this.showError('Invalid email or password'); return; }
+                this.currentUser = { id: player.id, name: player.name, email: player.email, role: player.role || 'player' };
                 localStorage.setItem('leagueUser', JSON.stringify(this.currentUser));
                 this.showApp();
             }
@@ -893,10 +1297,14 @@
                 }
             }
 
+            isAdmin() {
+                return this.currentUser && this.currentUser.role === 'admin';
+            }
+
             showError(msg) {
-                const errorEl = document.getElementById('errorMsg');
-                errorEl.textContent = msg;
-                errorEl.classList.add('show');
+                const el = document.getElementById('errorMsg');
+                el.textContent = msg;
+                el.classList.add('show');
             }
 
             clearError() {
@@ -904,11 +1312,10 @@
             }
 
             clearForm() {
-                document.getElementById('loginEmail').value = '';
-                document.getElementById('loginPassword').value = '';
-                document.getElementById('signupName').value = '';
-                document.getElementById('signupEmail').value = '';
-                document.getElementById('signupPassword').value = '';
+                ['loginEmail','loginPassword','signupName','signupEmail','signupPassword'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
             }
 
             showAuth() {
@@ -922,33 +1329,30 @@
                 document.getElementById('authScreen').classList.add('hidden');
                 document.getElementById('appContainer').classList.add('active');
                 document.getElementById('userName').textContent = this.currentUser.name;
+                document.getElementById('adminSection').style.display = this.isAdmin() ? 'block' : 'none';
                 this.renderGames();
+                this.renderAdminTable();
+                this.renderPhotoSection();
             }
 
+            // ===== GAMES =====
             generateGames() {
                 this.games = [];
                 const today = new Date();
-                
-                // Generate games for next 8 weeks (Saturdays and Sundays)
                 for (let week = 0; week < 8; week++) {
                     for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
                         const date = new Date(today);
                         date.setDate(date.getDate() + (week * 7) + dayOffset);
-                        
                         const dayOfWeek = date.getDay();
-                        
-                        // Saturday (6) or Sunday (0)
                         if (dayOfWeek === 6 || dayOfWeek === 0) {
                             const gameId = 'game_' + date.getTime();
-                            
-                            // Create morning and evening games
                             ['09:00 AM', '06:00 PM'].forEach((time, idx) => {
                                 this.games.push({
                                     id: gameId + '_' + idx,
                                     date: date.toISOString().split('T')[0],
                                     dayName: date.toLocaleDateString('en-US', { weekday: 'long' }),
                                     dateStr: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-                                    time: time
+                                    time
                                 });
                             });
                         }
@@ -959,15 +1363,11 @@
             renderGames() {
                 const grid = document.getElementById('scheduleGrid');
                 grid.innerHTML = '';
-
                 this.games.forEach((game, idx) => {
                     const card = document.createElement('div');
                     card.className = 'game-card';
                     card.style.animation = `fadeInScale 0.6s ease-out ${idx * 0.05}s both`;
-
-                    const gameDate = new Date(game.date);
                     const stats = this.getGameStats(game.id);
-
                     card.innerHTML = `
                         <div class="game-header">
                             <div>
@@ -976,42 +1376,36 @@
                             </div>
                             <div class="game-time">${game.time}</div>
                         </div>
-
                         <div class="game-stats">
                             <div class="stat">
-                                <div class="stat-number">${stats.yes}</div>
+                                <div class="stat-number" style="color:var(--success)">${stats.yes}</div>
                                 <div class="stat-label">Playing</div>
                             </div>
                             <div class="stat">
-                                <div class="stat-number">${stats.maybe}</div>
+                                <div class="stat-number" style="color:var(--maybe)">${stats.maybe}</div>
                                 <div class="stat-label">Maybe</div>
                             </div>
                             <div class="stat">
-                                <div class="stat-number">${stats.no}</div>
+                                <div class="stat-number" style="color:var(--danger)">${stats.no}</div>
                                 <div class="stat-label">Not Playing</div>
                             </div>
                         </div>
-
                         <div class="current-player-section">
                             <div class="current-player-title">Your Status</div>
                             <div class="player-status">
-                                <button class="status-option yes-option ${this.getPlayerStatus(game.id) === 'yes' ? 'active' : ''}" 
+                                <button class="status-option yes-option ${this.getPlayerStatus(game.id) === 'yes' ? 'active' : ''}"
                                     onclick="app.updateStatus('${game.id}', 'yes')">✓ Playing</button>
-                                <button class="status-option maybe-option ${this.getPlayerStatus(game.id) === 'maybe' ? 'active' : ''}" 
+                                <button class="status-option maybe-option ${this.getPlayerStatus(game.id) === 'maybe' ? 'active' : ''}"
                                     onclick="app.updateStatus('${game.id}', 'maybe')">? Maybe</button>
-                                <button class="status-option no-option ${this.getPlayerStatus(game.id) === 'no' ? 'active' : ''}" 
+                                <button class="status-option no-option ${this.getPlayerStatus(game.id) === 'no' ? 'active' : ''}"
                                     onclick="app.updateStatus('${game.id}', 'no')">✗ Not Playing</button>
                             </div>
                         </div>
-
                         <div class="availability-section">
                             <div class="availability-title">Player Availability</div>
-                            <div class="player-list" id="players-${game.id}">
-                                <!-- Players populated here -->
-                            </div>
+                            <div class="player-list" id="players-${game.id}"></div>
                         </div>
                     `;
-
                     grid.appendChild(card);
                     this.renderPlayersForGame(game.id);
                 });
@@ -1019,42 +1413,47 @@
 
             renderPlayersForGame(gameId) {
                 const playerListEl = document.getElementById(`players-${gameId}`);
-                
-                // Show a few sample players
-                const samplePlayers = [
-                    { id: 'p1', name: 'Alex Johnson' },
-                    { id: 'p2', name: 'Jordan Smith' },
-                    { id: 'p3', name: 'Casey Williams' },
-                    { id: 'p4', name: 'Morgan Davis' },
-                    { id: 'p5', name: 'Taylor Brown' }
-                ];
+                if (!playerListEl) return;
 
-                playerListEl.innerHTML = samplePlayers.map(player => {
+                if (this.players.length === 0) {
+                    playerListEl.innerHTML = '<div style="color:var(--text-secondary);font-size:0.85em;padding:8px 0;">No players registered yet.</div>';
+                    return;
+                }
+
+                const statusOrder = { yes: 0, maybe: 1, no: 2 };
+                const sorted = [...this.players].sort((a, b) => {
+                    const sa = this.getPlayerAvailability(gameId, a.id);
+                    const sb = this.getPlayerAvailability(gameId, b.id);
+                    return (statusOrder[sa] ?? 3) - (statusOrder[sb] ?? 3);
+                });
+
+                playerListEl.innerHTML = sorted.map(player => {
                     const status = this.getPlayerAvailability(gameId, player.id);
-                    let statusClass = 'available';
-                    let statusText = 'Available';
-                    
-                    if (status === 'no') {
-                        statusClass = 'unavailable';
-                        statusText = 'Not Available';
+                    let badgeClass, badgeText, borderColor;
+                    if (status === 'yes') {
+                        badgeClass = 'available'; badgeText = '✓ Playing'; borderColor = 'var(--success)';
+                    } else if (status === 'no') {
+                        badgeClass = 'unavailable'; badgeText = '✗ Not Playing'; borderColor = 'var(--danger)';
                     } else if (status === 'maybe') {
-                        statusClass = 'maybe';
-                        statusText = 'Maybe';
+                        badgeClass = 'maybe'; badgeText = '? Maybe'; borderColor = 'var(--maybe)';
+                    } else {
+                        badgeClass = 'no-response'; badgeText = '– No Response'; borderColor = '#475569';
                     }
-
+                    const initials = player.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
                     return `
                         <div class="player-item">
-                            <span class="player-name">${player.name}</span>
-                            <span class="availability-badge ${statusClass}">${statusText}</span>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <div class="player-avatar" style="width:30px;height:30px;font-size:0.7em;border:2px solid ${borderColor};flex-shrink:0;">${initials}</div>
+                                <span class="player-name">${player.name}</span>
+                            </div>
+                            <span class="availability-badge ${badgeClass}">${badgeText}</span>
                         </div>
                     `;
                 }).join('');
             }
 
             updateStatus(gameId, status) {
-                if (!this.availabilities[gameId]) {
-                    this.availabilities[gameId] = {};
-                }
+                if (!this.availabilities[gameId]) this.availabilities[gameId] = {};
                 this.availabilities[gameId][this.currentUser.id] = status;
                 this.saveData();
                 this.renderGames();
@@ -1065,27 +1464,171 @@
             }
 
             getPlayerAvailability(gameId, playerId) {
-                return this.availabilities[gameId]?.[playerId] || 'available';
+                return this.availabilities[gameId]?.[playerId] || null;
             }
 
             getGameStats(gameId) {
-                const availabilities = this.availabilities[gameId] || {};
+                const avail = this.availabilities[gameId] || {};
                 let yes = 0, no = 0, maybe = 0;
-
-                Object.values(availabilities).forEach(status => {
-                    if (status === 'yes') yes++;
-                    else if (status === 'no') no++;
-                    else if (status === 'maybe') maybe++;
+                Object.values(avail).forEach(s => {
+                    if (s === 'yes') yes++;
+                    else if (s === 'no') no++;
+                    else if (s === 'maybe') maybe++;
                 });
-
                 return { yes, no, maybe };
             }
 
             refreshGames() {
                 this.renderGames();
-                alert('Schedule refreshed!');
+                this.renderAdminTable();
+                this.renderPhotoSection();
             }
 
+            // ===== ADMIN: PLAYER MANAGEMENT =====
+            renderAdminTable() {
+                const container = document.getElementById('adminPlayersTable');
+                if (!container || !this.isAdmin()) return;
+
+                if (this.players.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">👤</div><div>No players yet. Add your first player above.</div></div>`;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <table class="players-table">
+                        <thead>
+                            <tr>
+                                <th>Player</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${this.players.map(p => {
+                                const initials = p.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                                const isSelf = p.id === this.currentUser.id;
+                                return `<tr>
+                                    <td>
+                                        <div class="player-cell">
+                                            <div class="player-avatar">${initials}</div>
+                                            <div class="player-cell-info">
+                                                <div class="player-cell-name">${p.name}${isSelf ? ' <span style="color:var(--text-secondary);font-weight:400;font-size:0.82em;">(you)</span>' : ''}</div>
+                                                <div class="player-cell-email">${p.email}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="${p.role === 'admin' ? 'admin-badge' : 'player-badge'}">${p.role === 'admin' ? '⭐ Admin' : 'Player'}</span></td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="btn-edit" onclick="app.openEditPlayer('${p.id}')">✏️ Edit</button>
+                                            ${!isSelf ? `<button class="btn-delete" onclick="app.deletePlayer('${p.id}')">🗑 Delete</button>` : ''}
+                                        </div>
+                                    </td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>`;
+            }
+
+            openAddPlayer() {
+                this.editingPlayerId = null;
+                document.getElementById('modalTitle').textContent = 'Add Player';
+                document.getElementById('modalName').value = '';
+                document.getElementById('modalEmail').value = '';
+                document.getElementById('modalPassword').value = '';
+                document.getElementById('modalRole').value = 'player';
+                document.getElementById('playerModal').classList.add('open');
+            }
+
+            openEditPlayer(playerId) {
+                const player = this.players.find(p => p.id === playerId);
+                if (!player) return;
+                this.editingPlayerId = playerId;
+                document.getElementById('modalTitle').textContent = 'Edit Player';
+                document.getElementById('modalName').value = player.name;
+                document.getElementById('modalEmail').value = player.email;
+                document.getElementById('modalPassword').value = '';
+                document.getElementById('modalRole').value = player.role || 'player';
+                document.getElementById('playerModal').classList.add('open');
+            }
+
+            closeModal() {
+                document.getElementById('playerModal').classList.remove('open');
+                this.editingPlayerId = null;
+            }
+
+            savePlayer() {
+                const name = document.getElementById('modalName').value.trim();
+                const email = document.getElementById('modalEmail').value.trim();
+                const password = document.getElementById('modalPassword').value;
+                const role = document.getElementById('modalRole').value;
+                if (!name || !email) { alert('Name and email are required.'); return; }
+
+                if (this.editingPlayerId) {
+                    const player = this.players.find(p => p.id === this.editingPlayerId);
+                    if (!player) return;
+                    if (this.players.find(p => p.email === email && p.id !== this.editingPlayerId)) {
+                        alert('That email is already in use.'); return;
+                    }
+                    player.name = name;
+                    player.email = email;
+                    player.role = role;
+                    if (password.length >= 4) player.password = password;
+                    if (this.currentUser.id === player.id) {
+                        this.currentUser.name = name;
+                        this.currentUser.email = email;
+                        this.currentUser.role = role;
+                        localStorage.setItem('leagueUser', JSON.stringify(this.currentUser));
+                        document.getElementById('userName').textContent = name;
+                        document.getElementById('adminSection').style.display = this.isAdmin() ? 'block' : 'none';
+                    }
+                } else {
+                    if (password.length < 4) { alert('Password must be at least 4 characters.'); return; }
+                    if (this.players.find(p => p.email === email)) { alert('Email already registered.'); return; }
+                    this.players.push({ id: 'player_' + Date.now(), name, email, password, role });
+                }
+
+                this.saveData();
+                this.closeModal();
+                this.renderAdminTable();
+                this.renderPhotoSection();
+                this.renderGames();
+            }
+
+            deletePlayer(playerId) {
+                const player = this.players.find(p => p.id === playerId);
+                if (!player) return;
+                if (!confirm(`Delete "${player.name}"? This cannot be undone.`)) return;
+                this.players = this.players.filter(p => p.id !== playerId);
+                Object.keys(this.availabilities).forEach(gameId => {
+                    if (this.availabilities[gameId]) delete this.availabilities[gameId][playerId];
+                });
+                this.saveData();
+                this.renderAdminTable();
+                this.renderPhotoSection();
+                this.renderGames();
+            }
+
+            // ===== PHOTO SECTION =====
+            renderPhotoSection() {
+                const grid = document.getElementById('photoGrid');
+                if (!grid) return;
+                if (this.players.length === 0) {
+                    grid.innerHTML = '<div style="color:var(--text-secondary);font-size:0.9em;">No players registered yet.</div>';
+                    return;
+                }
+                grid.innerHTML = this.players.map(player => {
+                    const initials = player.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                    return `
+                        <div class="photo-card">
+                            <div class="photo-avatar-large">${initials}</div>
+                            <div class="photo-player-name">${player.name}</div>
+                            <div class="photo-player-role">${player.role === 'admin' ? '⭐ Admin' : 'Player'}</div>
+                        </div>`;
+                }).join('');
+            }
+
+            // ===== DATA =====
             saveData() {
                 localStorage.setItem('leagueAvailabilities', JSON.stringify(this.availabilities));
                 localStorage.setItem('leaguePlayers', JSON.stringify(this.players));
@@ -1094,20 +1637,17 @@
             loadData() {
                 const savedAvailabilities = localStorage.getItem('leagueAvailabilities');
                 const savedPlayers = localStorage.getItem('leaguePlayers');
-                
-                if (savedAvailabilities) {
-                    this.availabilities = JSON.parse(savedAvailabilities);
-                }
-                
+                if (savedAvailabilities) this.availabilities = JSON.parse(savedAvailabilities);
                 if (savedPlayers) {
                     this.players = JSON.parse(savedPlayers);
                 } else {
-                    // Add sample players if none exist
                     this.players = [
-                        { id: 'p1', name: 'Alex Johnson', email: 'alex@test.com', password: 'test1' },
-                        { id: 'p2', name: 'Jordan Smith', email: 'jordan@test.com', password: 'test2' },
-                        { id: 'p3', name: 'Casey Williams', email: 'casey@test.com', password: 'test3' }
+                        { id: 'admin1', name: 'Admin User', email: 'admin@league.com', password: 'admin', role: 'admin' },
+                        { id: 'p1', name: 'Alex Johnson', email: 'alex@test.com', password: 'test1', role: 'player' },
+                        { id: 'p2', name: 'Jordan Smith', email: 'jordan@test.com', password: 'test2', role: 'player' },
+                        { id: 'p3', name: 'Casey Williams', email: 'casey@test.com', password: 'test3', role: 'player' }
                     ];
+                    this.saveData();
                 }
             }
         }
