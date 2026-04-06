@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>League Game Scheduler</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #0f172a;
+            --accent: #0ea5e9;
+            --accent-dark: #0284c7;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --maybe: #8b5cf6;
+            --bg-dark: #0f172a;
+            --bg-darker: #020617;
+            --bg-card: #1e293b;
+            --border: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* ===== AUTH SCREEN ===== */
+        .auth-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2000;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .auth-screen.hidden {
+            display: none;
+        }
+
+        .auth-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 60px 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .auth-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.8em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent) 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .auth-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            padding: 14px 16px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+        }
+
+        .auth-btn {
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3);
+        }
+
+        .toggle-mode {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+
+        .toggle-mode button {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .error-msg {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            color: #fca5a5;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .error-msg.show {
+            display: block;
+        }
+
+        .success-msg {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            color: #86efac;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .success-msg.show {
+            display: block;
+        }
+
+        /* ===== APP SCREEN ===== */
+        .app-container {
+            display: none;
+        }
+
+        .app-container.active {
+            display: block;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            gap: 20px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.2em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent) 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-info {
+            background: var(--bg-card);
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, #06b6d4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            overflow: hidden;
+            border: 2px solid var(--border);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, #06b6d4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            overflow: hidden;
+            border: 2px solid rgba(14, 165, 233, 0.3);
+            flex-shrink: 0;
+        }
+
+        .player-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-with-avatar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .photo-upload-section {
+            background: rgba(14, 165, 233, 0.1);
+            border: 2px dashed var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .photo-upload-title {
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 12px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .photo-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            margin: 12px auto;
+            overflow: hidden;
+            border: 2px solid var(--border);
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            font-size: 0.85em;
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+        }
+
+        .file-input-label input[type="file"] {
+            display: none;
+        }
+
+        .remove-photo-btn {
+            padding: 8px 12px;
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .remove-photo-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        .player-info {
+            flex: 1;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 11px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: var(--accent);
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border: 1px solid var(--danger);
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8em;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 50px;
+        }
+
+        .game-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+            animation: fadeInScale 0.6s ease-out;
+            position: relative;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent) 0%, #06b6d4 100%);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .game-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 12px 40px rgba(14, 165, 233, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .game-day {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5em;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .game-time {
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 0.85em;
+        }
+
+        .game-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 20px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin: 20px 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.6em;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .current-player-section {
+            background: rgba(14, 165, 233, 0.1);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .current-player-title {
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 12px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .player-status {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .status-option {
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            border: 2px solid;
+            background: transparent;
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85em;
+        }
+
+        .status-option.yes-option {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .status-option.yes-option.active {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .status-option.yes-option:hover {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .status-option.no-option {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .status-option.no-option.active {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .status-option.no-option:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .status-option.maybe-option {
+            border-color: var(--maybe);
+            color: var(--maybe);
+        }
+
+        .status-option.maybe-option.active {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .status-option.maybe-option:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        /* ADMIN PANEL */
+        .admin-panel {
+            background: var(--bg-card);
+            border: 2px solid var(--warning);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 50px;
+            animation: fadeInScale 0.6s ease-out;
+        }
+
+        .admin-panel .section-title {
+            color: var(--warning);
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .admin-tab {
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -13px;
+        }
+
+        .admin-tab.active {
+            color: var(--warning);
+            border-bottom-color: var(--warning);
+        }
+
+        .admin-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px 12px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9em;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .player-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .player-email {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        .player-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.8em;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-small-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-small-danger:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-small-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #86efac;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-small-success:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .notification-bell {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+        }
+
+        .notification-bell:hover {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            font-weight: 700;
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            width: 350px;
+            max-height: 500px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .notification-dropdown.active {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .notification-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(14, 165, 233, 0.1);
+        }
+
+        .notification-header h3 {
+            font-size: 1em;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .notification-clear {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 0.85em;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .notification-list {
+            list-style: none;
+        }
+
+        .notification-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:hover {
+            background: rgba(14, 165, 233, 0.05);
+        }
+
+        .notification-item.unread {
+            background: rgba(14, 165, 233, 0.1);
+            border-left: 3px solid var(--accent);
+        }
+
+        .notification-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            font-size: 0.9em;
+        }
+
+        .notification-message {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .notification-time {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .notification-action-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75em;
+            transition: all 0.3s ease;
+        }
+
+        .notification-action-btn:hover {
+            background: rgba(14, 165, 233, 0.2);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .notification-empty {
+            padding: 30px 16px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .availability-change {
+            border-left-color: var(--warning);
+        }
+
+        .weekly-reminder {
+            border-left-color: var(--success);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .game-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .player-status {
+                grid-template-columns: 1fr;
+            }
+
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- AUTH SCREEN -->
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="auth-title">LEAGUE</div>
+                <div class="auth-subtitle">Game Scheduling System</div>
+            </div>
+
+            <div class="auth-form" id="authForm">
+                <div class="error-msg" id="authError"></div>
+                <div class="success-msg" id="authSuccess"></div>
+
+                <div id="loginMode">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••">
+                    </div>
+                    <button type="button" class="auth-btn" onclick="app.login()">Login</button>
+                    <div class="toggle-mode">
+                        Don't have an account? <button type="button" onclick="app.toggleAuthMode()">Sign up</button>
+                    </div>
+                </div>
+
+                <div id="signupMode" style="display: none;">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" placeholder="••••••••">
+                    </div>
+                    <button type="button" class="auth-btn" onclick="app.signup()">Create Account</button>
+                    <div class="toggle-mode">
+                        Already have an account? <button type="button" onclick="app.toggleAuthMode()">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP SCREEN -->
+    <div class="app-container" id="appContainer">
+        <div class="container">
+            <header>
+                <div class="header-left">
+                    <div class="logo">⚽ LEAGUE</div>
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatarHeader">
+                            <span id="userInitial">?</span>
+                        </div>
+                        <div>
+                            <div>Welcome, <span class="user-name" id="userName">Player</span></div>
+                            <div class="user-role" id="userRole">Player</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div style="position: relative;">
+                        <button class="notification-bell" id="notificationBell" onclick="app.toggleNotifications()">
+                            🔔
+                            <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                        </button>
+                        <div class="notification-dropdown" id="notificationDropdown"></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="app.loadGames()">🔄 Refresh</button>
+                    <button class="btn btn-logout" onclick="app.logout()">Logout</button>
+                </div>
+            </header>
+
+            <!-- USER PROFILE SECTION -->
+            <section style="margin-bottom: 40px;">
+                <h2 class="section-title">👤 Your Profile</h2>
+                <div class="sidebar-card">
+                    <div class="photo-upload-section">
+                        <div class="photo-upload-title">Player Photo</div>
+                        <div class="photo-preview" id="photoPreview" style="display: none;">
+                            <img id="photoImg" src="" alt="Profile photo">
+                        </div>
+                        <div id="noPhotoMessage" style="color: var(--text-secondary); margin-bottom: 12px;">No photo uploaded yet</div>
+                        <label class="file-input-label">
+                            📷 Upload Photo
+                            <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp">
+                        </label>
+                        <button class="remove-photo-btn" id="removePhotoBtn" style="display: none; margin-left: 8px;" onclick="app.removePhoto()">Remove Photo</button>
+                    </div>
+                    
+                    <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+                        <div style="margin-bottom: 16px;">
+                            <strong style="color: var(--text-primary);">General Availability Status:</strong>
+                            <p style="color: var(--text-secondary); margin-top: 8px; font-size: 0.9em;">Mark yourself as available to show admins you're ready to play</p>
+                            <div style="margin-top: 12px; display: flex; gap: 8px;">
+                                <button class="status-option yes-option" id="availableBtn" onclick="app.setPlayerAvailable(true)" style="flex: 1;">✓ Available</button>
+                                <button class="status-option no-option" id="unavailableBtn" onclick="app.setPlayerAvailable(false)" style="flex: 1;">✗ Unavailable</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+                        <div style="margin-bottom: 12px;">
+                            <strong style="color: var(--text-primary);">Name:</strong>
+                            <div id="profileName" style="color: var(--text-secondary); margin-top: 4px;">-</div>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <strong style="color: var(--text-primary);">Email:</strong>
+                            <div id="profileEmail" style="color: var(--text-secondary); margin-top: 4px;">-</div>
+                        </div>
+                        <div>
+                            <strong style="color: var(--text-primary);">Role:</strong>
+                            <div id="profileRole" style="color: var(--warning); margin-top: 4px; text-transform: uppercase; font-weight: 700;">-</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ADMIN PANEL -->
+            <div class="admin-panel" id="adminPanel" style="display: none;">
+                <h2 class="section-title">⚙️ Admin Control</h2>
+                
+                <div class="admin-tabs">
+                    <button class="admin-tab active" onclick="app.switchAdminTab('games')">Manage Games</button>
+                    <button class="admin-tab" onclick="app.switchAdminTab('players')">Manage Players</button>
+                    <button class="admin-tab" onclick="app.switchAdminTab('available')">Available Players</button>
+                </div>
+
+                <!-- Games Tab -->
+                <div class="admin-content active" id="gamesTab">
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 16px; color: var(--accent);">Create New Game</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="gameDate">Date</label>
+                                <input type="date" id="gameDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="gameTime">Time</label>
+                                <input type="time" id="gameTime">
+                            </div>
+                            <div class="form-group">
+                                <label for="gameVenue">Venue</label>
+                                <input type="text" id="gameVenue" placeholder="Field location">
+                            </div>
+                            <div class="form-group">
+                                <label for="gameMax">Max Players</label>
+                                <input type="number" id="gameMax" value="20" min="1">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="app.createGame()">Create Game</button>
+                    </div>
+                </div>
+
+                <!-- Players Tab -->
+                <div class="admin-content" id="playersTab">
+                    <h3 style="margin-bottom: 16px; color: var(--accent);">All Players</h3>
+                    <div class="player-list" id="playersList"></div>
+                </div>
+
+                <!-- Available Players Tab -->
+                <div class="admin-content" id="availableTab">
+                    <h3 style="margin-bottom: 16px; color: var(--success);">Players Available to Play</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.9em;">
+                        These are all players who have marked themselves as available. You can assign them to games.
+                    </p>
+                    <div class="player-list" id="availablePlayersList"></div>
+                </div>
+            </div>
+
+            <!-- SCHEDULE SECTION -->
+            <section>
+                <h2 class="section-title">📅 Upcoming Games</h2>
+                <div class="schedule-grid" id="scheduleGrid">
+                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <div class="loading"></div>
+                        <p style="margin-top: 16px;">Loading games...</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin + '/api';
+
+        class LeagueApp {
+            constructor() {
+                this.token = localStorage.getItem('leagueToken');
+                this.user = JSON.parse(localStorage.getItem('leagueUser') || '{}');
+                this.games = [];
+                this.notifications = [];
+                this.init();
+            }
+
+            init() {
+                this.checkAuth();
+            }
+
+            checkAuth() {
+                if (this.token && this.user.id) {
+                    this.showApp();
+                    this.loadGames();
+                    if (this.user.role === 'admin') {
+                        this.showAdminPanel();
+                        this.loadPlayers();
+                    }
+                } else {
+                    this.showAuth();
+                }
+            }
+
+            async signup() {
+                const name = document.getElementById('signupName').value.trim();
+                const email = document.getElementById('signupEmail').value.trim();
+                const password = document.getElementById('signupPassword').value;
+
+                if (!name || !email || !password) {
+                    this.showAuthError('All fields required');
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`${API_URL}/auth/signup`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, email, password })
+                    });
+
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error);
+
+                    this.token = data.token;
+                    this.user = data.user;
+                    localStorage.setItem('leagueToken', this.token);
+                    localStorage.setItem('leagueUser', JSON.stringify(this.user));
+                    this.showApp();
+                    this.loadGames();
+                } catch (error) {
+                    this.showAuthError(error.message);
+                }
+            }
+
+            async login() {
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+
+                if (!email || !password) {
+                    this.showAuthError('Email and password required');
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`${API_URL}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error);
+
+                    this.token = data.token;
+                    this.user = data.user;
+                    localStorage.setItem('leagueToken', this.token);
+                    localStorage.setItem('leagueUser', JSON.stringify(this.user));
+                    this.showApp();
+                    this.loadGames();
+                } catch (error) {
+                    this.showAuthError(error.message);
+                }
+            }
+
+            logout() {
+                if (confirm('Logout?')) {
+                    localStorage.removeItem('leagueToken');
+                    localStorage.removeItem('leagueUser');
+                    this.token = null;
+                    this.user = null;
+                    this.showAuth();
+                    this.clearForm();
+                }
+            }
+
+            toggleAuthMode() {
+                document.getElementById('loginMode').style.display =
+                    document.getElementById('loginMode').style.display === 'none' ? 'block' : 'none';
+                document.getElementById('signupMode').style.display =
+                    document.getElementById('signupMode').style.display === 'none' ? 'block' : 'none';
+                this.clearAuthMessages();
+            }
+
+            showAuth() {
+                document.getElementById('authScreen').classList.remove('hidden');
+                document.getElementById('appContainer').classList.remove('active');
+            }
+
+            showApp() {
+                document.getElementById('authScreen').classList.add('hidden');
+                document.getElementById('appContainer').classList.add('active');
+                document.getElementById('userName').textContent = this.user.name;
+                document.getElementById('userRole').textContent = this.user.role;
+                document.getElementById('profileName').textContent = this.user.name;
+                document.getElementById('profileEmail').textContent = this.user.email;
+                document.getElementById('profileRole').textContent = this.user.role;
+                
+                // Set user avatar initial
+                const initial = this.user.name.charAt(0).toUpperCase();
+                document.getElementById('userInitial').textContent = initial;
+                
+                // Setup photo input handler
+                document.getElementById('photoInput').addEventListener('change', (e) => this.handlePhotoUpload(e));
+                
+                // Load user photo if exists
+                this.loadUserProfile();
+                
+                this.loadGames();
+            }
+
+            async loadUserProfile() {
+                try {
+                    const res = await fetch(`${API_URL}/users/${this.user.id}`);
+                    const userData = await res.json();
+                    if (userData.photo_url) {
+                        this.displayPhoto(userData.photo_url);
+                    }
+                    
+                    // Load player's availability status
+                    this.loadPlayerStatus();
+                } catch (error) {
+                    console.error('Error loading profile:', error);
+                }
+            }
+
+            async loadPlayerStatus() {
+                try {
+                    const res = await fetch(`${API_URL}/player/status`, {
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+                    const data = await res.json();
+                    this.updateStatusUI(data.is_active === 1);
+                } catch (error) {
+                    console.error('Error loading player status:', error);
+                }
+            }
+
+            updateStatusUI(isActive) {
+                const availableBtn = document.getElementById('availableBtn');
+                const unavailableBtn = document.getElementById('unavailableBtn');
+
+                if (isActive) {
+                    availableBtn.classList.add('active');
+                    unavailableBtn.classList.remove('active');
+                } else {
+                    availableBtn.classList.remove('active');
+                    unavailableBtn.classList.add('active');
+                }
+            }
+
+            async setPlayerAvailable(isAvailable) {
+                try {
+                    const endpoint = isAvailable ? '/api/player/status/available' : '/api/player/status/unavailable';
+                    const res = await fetch(`${API_URL}${endpoint}`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+
+                    if (!res.ok) throw new Error('Failed to update status');
+
+                    this.updateStatusUI(isAvailable);
+                    this.loadNotifications(); // Refresh notifications
+                    alert(isAvailable ? 'You\'re now marked as available! Admins will see you.' : 'You\'re marked as unavailable.');
+                } catch (error) {
+                    alert('Error updating availability: ' + error.message);
+                }
+            }
+
+            displayPhoto(photoUrl) {
+                const preview = document.getElementById('photoPreview');
+                const img = document.getElementById('photoImg');
+                const noPhotoMsg = document.getElementById('noPhotoMessage');
+                const removeBtn = document.getElementById('removePhotoBtn');
+                const userAvatar = document.getElementById('userAvatarHeader');
+                
+                img.src = photoUrl;
+                preview.style.display = 'block';
+                noPhotoMsg.style.display = 'none';
+                removeBtn.style.display = 'inline-block';
+                
+                // Update header avatar
+                userAvatar.innerHTML = `<img src="${photoUrl}" alt="${this.user.name}">`;
+            }
+
+            async handlePhotoUpload(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const formData = new FormData();
+                formData.append('photo', file);
+
+                try {
+                    const res = await fetch(`${API_URL}/users/photo/upload`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${this.token}` },
+                        body: formData
+                    });
+
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error);
+
+                    this.displayPhoto(data.photo_url);
+                    // Reset input
+                    e.target.value = '';
+                } catch (error) {
+                    alert('Error uploading photo: ' + error.message);
+                }
+            }
+
+            async removePhoto() {
+                if (!confirm('Remove your photo?')) return;
+
+                try {
+                    const res = await fetch(`${API_URL}/users/photo`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+
+                    if (!res.ok) throw new Error('Failed to remove photo');
+
+                    const preview = document.getElementById('photoPreview');
+                    const noPhotoMsg = document.getElementById('noPhotoMessage');
+                    const removeBtn = document.getElementById('removePhotoBtn');
+                    const userAvatar = document.getElementById('userAvatarHeader');
+                    
+                    preview.style.display = 'none';
+                    noPhotoMsg.style.display = 'block';
+                    removeBtn.style.display = 'none';
+                    
+                    // Reset header avatar to initial
+                    const initial = this.user.name.charAt(0).toUpperCase();
+                    userAvatar.innerHTML = `<span>${initial}</span>`;
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+
+            showAuthError(msg) {
+                const el = document.getElementById('authError');
+                el.textContent = msg;
+                el.classList.add('show');
+            }
+
+            clearAuthMessages() {
+                document.getElementById('authError').classList.remove('show');
+                document.getElementById('authSuccess').classList.remove('show');
+            }
+
+            clearForm() {
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('signupName').value = '';
+                document.getElementById('signupEmail').value = '';
+                document.getElementById('signupPassword').value = '';
+            }
+
+            async loadGames() {
+                try {
+                    const res = await fetch(`${API_URL}/games`);
+                    const data = await res.json();
+                    this.games = data;
+                    this.renderGames();
+                } catch (error) {
+                    console.error('Error loading games:', error);
+                }
+            }
+
+            async loadPlayers() {
+                try {
+                    const res = await fetch(`${API_URL}/users`, {
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+                    const players = await res.json();
+                    this.renderPlayers(players);
+                    
+                    // Also load available players if admin
+                    if (this.user.role === 'admin') {
+                        this.loadAvailablePlayers();
+                    }
+                } catch (error) {
+                    console.error('Error loading players:', error);
+                }
+            }
+
+            async loadAvailablePlayers() {
+                try {
+                    const res = await fetch(`${API_URL}/players/available`, {
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+                    const players = await res.json();
+                    this.renderAvailablePlayers(players);
+                } catch (error) {
+                    console.error('Error loading available players:', error);
+                }
+            }
+
+            renderAvailablePlayers(players) {
+                const list = document.getElementById('availablePlayersList');
+                
+                if (players.length === 0) {
+                    list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">No players marked as available yet</div>';
+                    return;
+                }
+
+                list.innerHTML = players.map(player => `
+                    <div class="player-item">
+                        <div class="player-info">
+                            <div class="player-avatar">
+                                ${player.photo_url ? `<img src="${player.photo_url}?size=100" alt="${player.name}">` : `<span>${player.name.charAt(0).toUpperCase()}</span>`}
+                            </div>
+                            <div>
+                                <div class="player-name">${player.name}</div>
+                                <div class="player-email">${player.email}</div>
+                                <div style="font-size: 0.75em; color: var(--text-secondary); margin-top: 2px;">Status: <span style="color: var(--success); font-weight: 700;">✓ Available</span></div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderGames() {
+                const grid = document.getElementById('scheduleGrid');
+                if (this.games.length === 0) {
+                    grid.innerHTML = '<p style="color: var(--text-secondary);">No games scheduled</p>';
+                    return;
+                }
+
+                grid.innerHTML = this.games.map((game, idx) => `
+                    <div class="game-card" style="animation-delay: ${idx * 0.05}s">
+                        <div class="game-header">
+                            <div>
+                                <div class="game-day">${this.formatDate(game.date).split(',')[0]}</div>
+                                <div style="font-size: 0.9em; color: var(--text-secondary);">${this.formatDate(game.date)}</div>
+                            </div>
+                            <div class="game-time">${game.time}</div>
+                        </div>
+
+                        <div class="game-stats">
+                            <div class="stat">
+                                <div class="stat-number">-</div>
+                                <div class="stat-label">Playing</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">-</div>
+                                <div class="stat-label">Maybe</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">-</div>
+                                <div class="stat-label">Not Playing</div>
+                            </div>
+                        </div>
+
+                        <div class="current-player-section">
+                            <div class="current-player-title">Your Status</div>
+                            <div class="player-status">
+                                <button class="status-option yes-option" onclick="app.updateAvailability('${game.id}', 'yes')">✓ Playing</button>
+                                <button class="status-option maybe-option" onclick="app.updateAvailability('${game.id}', 'maybe')">? Maybe</button>
+                                <button class="status-option no-option" onclick="app.updateAvailability('${game.id}', 'no')">✗ Not Playing</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderPlayers(players) {
+                const list = document.getElementById('playersList');
+                list.innerHTML = players.map(player => `
+                    <div class="player-item">
+                        <div class="player-info">
+                            <div class="player-avatar">
+                                ${player.photo_url ? `<img src="${player.photo_url}?size=100" alt="${player.name}">` : `<span>${player.name.charAt(0).toUpperCase()}</span>`}
+                            </div>
+                            <div>
+                                <div class="player-name">${player.name}</div>
+                                <div class="player-email">${player.email}</div>
+                            </div>
+                        </div>
+                        <div class="player-actions">
+                            ${player.role !== 'admin' ? `
+                                <button class="btn-small btn-small-success" onclick="app.promotePlayer('${player.id}')">Make Admin</button>
+                                <button class="btn-small btn-small-danger" onclick="app.deletePlayer('${player.id}')">Delete</button>
+                            ` : '<span style="color: var(--warning); font-weight: 700;">ADMIN</span>'}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            showAdminPanel() {
+                document.getElementById('adminPanel').style.display = 'block';
+            }
+
+            switchAdminTab(tab) {
+                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
+                event.target.classList.add('active');
+                document.getElementById(tab + 'Tab').classList.add('active');
+            }
+
+            async createGame() {
+                const date = document.getElementById('gameDate').value;
+                const time = document.getElementById('gameTime').value;
+                const venue = document.getElementById('gameVenue').value;
+                const max_players = parseInt(document.getElementById('gameMax').value);
+
+                if (!date || !time) {
+                    alert('Date and time required');
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`${API_URL}/games`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.token}`
+                        },
+                        body: JSON.stringify({ date, time, venue, max_players })
+                    });
+
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error);
+
+                    alert('Game created!');
+                    this.loadGames();
+                    document.getElementById('gameDate').value = '';
+                    document.getElementById('gameTime').value = '';
+                    document.getElementById('gameVenue').value = '';
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+
+            async updateAvailability(gameId, status) {
+                try {
+                    const res = await fetch(`${API_URL}/availability`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.token}`
+                        },
+                        body: JSON.stringify({ game_id: gameId, status })
+                    });
+
+                    if (!res.ok) throw new Error('Update failed');
+                    this.loadGames();
+                    this.loadNotifications(); // Refresh notifications
+                } catch (error) {
+                    alert('Error updating availability');
+                }
+            }
+
+            // ===== NOTIFICATION METHODS =====
+
+            async loadNotifications() {
+                try {
+                    const res = await fetch(`${API_URL}/notifications`, {
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+                    const notifications = await res.json();
+                    this.notifications = notifications;
+                    this.updateNotificationUI();
+                } catch (error) {
+                    console.error('Error loading notifications:', error);
+                }
+            }
+
+            async getUnreadCount() {
+                try {
+                    const res = await fetch(`${API_URL}/notifications/unread/count`, {
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+                    const data = await res.json();
+                    return data.unread_count;
+                } catch (error) {
+                    console.error('Error getting unread count:', error);
+                    return 0;
+                }
+            }
+
+            async markNotificationAsRead(notificationId) {
+                try {
+                    await fetch(`${API_URL}/notifications/${notificationId}/read`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+                    this.loadNotifications();
+                } catch (error) {
+                    console.error('Error marking notification as read:', error);
+                }
+            }
+
+            async deleteNotification(notificationId) {
+                try {
+                    await fetch(`${API_URL}/notifications/${notificationId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+                    this.loadNotifications();
+                } catch (error) {
+                    console.error('Error deleting notification:', error);
+                }
+            }
+
+            updateNotificationUI() {
+                const dropdown = document.getElementById('notificationDropdown');
+                const badge = document.getElementById('notificationBadge');
+                const unreadCount = this.notifications.filter(n => !n.read).length;
+
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+
+                if (this.notifications.length === 0) {
+                    dropdown.innerHTML = `
+                        <div class="notification-header">
+                            <h3>Notifications</h3>
+                        </div>
+                        <div class="notification-empty">No notifications yet</div>
+                    `;
+                    return;
+                }
+
+                const notificationHTML = this.notifications.map(notif => {
+                    const date = new Date(notif.created_at);
+                    const timeAgo = this.getTimeAgo(date);
+                    const typeClass = notif.type === 'availability_change' ? 'availability-change' : 'weekly-reminder';
+
+                    return `
+                        <li class="notification-item ${notif.read ? '' : 'unread'} ${typeClass}">
+                            <div class="notification-title">${notif.title}</div>
+                            <div class="notification-message">${notif.message}</div>
+                            <div class="notification-time">${timeAgo}</div>
+                            <div class="notification-actions">
+                                ${!notif.read ? `<button class="notification-action-btn" onclick="app.markNotificationAsRead('${notif.id}')">Mark Read</button>` : ''}
+                                <button class="notification-action-btn" onclick="app.deleteNotification('${notif.id}')">Delete</button>
+                            </div>
+                        </li>
+                    `;
+                }).join('');
+
+                dropdown.innerHTML = `
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        ${unreadCount > 0 ? `<button class="notification-clear" onclick="app.markAllNotificationsRead()">Mark all read</button>` : ''}
+                    </div>
+                    <ul class="notification-list">${notificationHTML}</ul>
+                `;
+            }
+
+            toggleNotifications() {
+                const dropdown = document.getElementById('notificationDropdown');
+                dropdown.classList.toggle('active');
+                if (dropdown.classList.contains('active')) {
+                    this.loadNotifications();
+                }
+            }
+
+            async markAllNotificationsRead() {
+                try {
+                    await fetch(`${API_URL}/notifications/read/all`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+                    this.loadNotifications();
+                } catch (error) {
+                    console.error('Error marking all as read:', error);
+                }
+            }
+
+            getTimeAgo(date) {
+                const now = new Date();
+                const seconds = Math.floor((now - date) / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const hours = Math.floor(minutes / 60);
+                const days = Math.floor(hours / 24);
+
+                if (seconds < 60) return 'just now';
+                if (minutes < 60) return `${minutes}m ago`;
+                if (hours < 24) return `${hours}h ago`;
+                if (days < 7) return `${days}d ago`;
+                return date.toLocaleDateString();
+            }
+
+            async promotePlayer(playerId) {
+                if (!confirm('Promote this player to admin?')) return;
+
+                try {
+                    const res = await fetch(`${API_URL}/users/${playerId}/promote`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+
+                    if (!res.ok) throw new Error('Promotion failed');
+                    this.loadPlayers();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+
+            async deletePlayer(playerId) {
+                if (!confirm('Delete this player?')) return;
+
+                try {
+                    const res = await fetch(`${API_URL}/users/${playerId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${this.token}` }
+                    });
+
+                    if (!res.ok) throw new Error('Delete failed');
+                    this.loadPlayers();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+
+            formatDate(dateStr) {
+                return new Date(dateStr).toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+        }
+
+        const app = new LeagueApp();
+    </script>
+</body>
+</html>

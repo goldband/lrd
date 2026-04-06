@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>League Game Scheduler</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #0f172a;
+            --accent: #0ea5e9;
+            --accent-dark: #0284c7;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --maybe: #8b5cf6;
+            --bg-dark: #0f172a;
+            --bg-darker: #020617;
+            --bg-card: #1e293b;
+            --border: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* ===== AUTHENTICATION SCREEN ===== */
+        .auth-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2000;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .auth-screen.hidden {
+            display: none;
+        }
+
+        .auth-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 60px 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .auth-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.8em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent) 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        .auth-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            padding: 14px 16px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .auth-btn {
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.95em;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3);
+        }
+
+        .auth-btn:active {
+            transform: translateY(0);
+        }
+
+        .toggle-mode {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+
+        .toggle-mode button {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+
+        .toggle-mode button:hover {
+            color: #06b6d4;
+        }
+
+        .error-msg {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            color: #fca5a5;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .error-msg.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        /* ===== MAIN APP ===== */
+        .app-container {
+            display: none;
+        }
+
+        .app-container.active {
+            display: block;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            gap: 20px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.2em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent) 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-info {
+            background: var(--bg-card);
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .user-name {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 11px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: var(--accent);
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border: 1px solid var(--danger);
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* ===== SCHEDULE SECTION ===== */
+        .schedule-section {
+            margin-bottom: 50px;
+            animation: fadeInScale 0.7s ease-out 0.1s both;
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8em;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .game-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+            animation: fadeInScale 0.6s ease-out;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent) 0%, #06b6d4 100%);
+        }
+
+        .game-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 12px 40px rgba(14, 165, 233, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .game-day {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5em;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .game-date {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .game-time {
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 0.85em;
+        }
+
+        .game-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 20px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin: 20px 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.6em;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .availability-section {
+            margin-top: 20px;
+        }
+
+        .availability-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .player-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        .player-item:hover {
+            background: rgba(30, 41, 59, 0.7);
+            border-color: var(--border);
+        }
+
+        .player-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .availability-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .available {
+            background: rgba(16, 185, 129, 0.2);
+            color: #86efac;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .unavailable {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .maybe {
+            background: rgba(139, 92, 246, 0.2);
+            color: #d8b4fe;
+            border: 1px solid rgba(139, 92, 246, 0.4);
+        }
+
+        .availability-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .availability-btn {
+            padding: 8px 12px;
+            border: 2px solid;
+            border-radius: 8px;
+            background: transparent;
+            font-weight: 700;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .availability-btn.yes {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .availability-btn.yes.active {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .availability-btn.yes:hover {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .availability-btn.no {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .availability-btn.no.active {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .availability-btn.no:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .availability-btn.maybe {
+            border-color: var(--maybe);
+            color: var(--maybe);
+        }
+
+        .availability-btn.maybe.active {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .availability-btn.maybe:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .current-player-section {
+            background: rgba(14, 165, 233, 0.1);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .current-player-title {
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 12px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .player-status {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .status-option {
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            border: 2px solid;
+            background: transparent;
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85em;
+        }
+
+        .status-option.yes-option {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .status-option.yes-option.active {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--success);
+        }
+
+        .status-option.yes-option:hover {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .status-option.no-option {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .status-option.no-option.active {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--danger);
+        }
+
+        .status-option.no-option:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .status-option.maybe-option {
+            border-color: var(--maybe);
+            color: var(--maybe);
+        }
+
+        .status-option.maybe-option.active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: var(--maybe);
+        }
+
+        .status-option.maybe-option:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-dark);
+        }
+
+        @media (max-width: 1024px) {
+            .schedule-grid {
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            }
+
+            .logo {
+                font-size: 1.8em;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-right {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 20px 12px;
+            }
+
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .game-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .player-status {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-container {
+                padding: 40px 24px;
+            }
+
+            .auth-title {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== AUTH SCREEN ===== -->
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="auth-title">LEAGUE</div>
+                <div class="auth-subtitle">Game Scheduling System</div>
+            </div>
+
+            <div class="auth-form" id="authForm">
+                <div class="error-msg" id="errorMsg"></div>
+
+                <div id="loginMode">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••">
+                    </div>
+                    <button type="button" class="auth-btn" onclick="app.login()">Login</button>
+                    <div class="toggle-mode">
+                        Don't have an account? <button type="button" onclick="app.toggleAuthMode()">Sign up</button>
+                    </div>
+                </div>
+
+                <div id="signupMode" style="display: none;">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" placeholder="••••••••">
+                    </div>
+                    <button type="button" class="auth-btn" onclick="app.signup()">Create Account</button>
+                    <div class="toggle-mode">
+                        Already have an account? <button type="button" onclick="app.toggleAuthMode()">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MAIN APP ===== -->
+    <div class="app-container" id="appContainer">
+        <div class="container">
+            <header>
+                <div class="header-left">
+                    <div class="logo">⚽ LEAGUE</div>
+                    <div class="user-info">
+                        Welcome, <span class="user-name" id="userName">Player</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary" onclick="app.refreshGames()">Refresh Schedule</button>
+                    <button class="btn btn-logout" onclick="app.logout()">Logout</button>
+                </div>
+            </header>
+
+            <section class="schedule-section">
+                <h2 class="section-title">📅 Upcoming Games</h2>
+                <div class="schedule-grid" id="scheduleGrid">
+                    <!-- Games populated here -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        class LeagueApp {
+            constructor() {
+                this.currentUser = null;
+                this.games = [];
+                this.players = [];
+                this.availabilities = {}; // { gameId: { playerId: status } }
+                this.init();
+            }
+
+            init() {
+                this.loadData();
+                this.checkLogin();
+                this.generateGames();
+            }
+
+            checkLogin() {
+                const savedUser = localStorage.getItem('leagueUser');
+                if (savedUser) {
+                    this.currentUser = JSON.parse(savedUser);
+                    this.showApp();
+                } else {
+                    this.showAuth();
+                }
+            }
+
+            toggleAuthMode() {
+                document.getElementById('loginMode').style.display = 
+                    document.getElementById('loginMode').style.display === 'none' ? 'block' : 'none';
+                document.getElementById('signupMode').style.display = 
+                    document.getElementById('signupMode').style.display === 'none' ? 'block' : 'none';
+                this.clearError();
+            }
+
+            signup() {
+                const name = document.getElementById('signupName').value.trim();
+                const email = document.getElementById('signupEmail').value.trim();
+                const password = document.getElementById('signupPassword').value;
+
+                if (!name || !email || !password) {
+                    this.showError('All fields are required');
+                    return;
+                }
+
+                if (password.length < 4) {
+                    this.showError('Password must be at least 4 characters');
+                    return;
+                }
+
+                const existingUser = this.players.find(p => p.email === email);
+                if (existingUser) {
+                    this.showError('Email already registered');
+                    return;
+                }
+
+                const newPlayer = {
+                    id: 'player_' + Date.now(),
+                    name,
+                    email,
+                    password
+                };
+
+                this.players.push(newPlayer);
+                this.currentUser = { id: newPlayer.id, name, email };
+                this.saveData();
+                localStorage.setItem('leagueUser', JSON.stringify(this.currentUser));
+                this.showApp();
+            }
+
+            login() {
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+
+                if (!email || !password) {
+                    this.showError('Email and password required');
+                    return;
+                }
+
+                const player = this.players.find(p => p.email === email && p.password === password);
+                if (!player) {
+                    this.showError('Invalid email or password');
+                    return;
+                }
+
+                this.currentUser = { id: player.id, name: player.name, email: player.email };
+                localStorage.setItem('leagueUser', JSON.stringify(this.currentUser));
+                this.showApp();
+            }
+
+            logout() {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.removeItem('leagueUser');
+                    this.currentUser = null;
+                    this.showAuth();
+                    this.clearForm();
+                }
+            }
+
+            showError(msg) {
+                const errorEl = document.getElementById('errorMsg');
+                errorEl.textContent = msg;
+                errorEl.classList.add('show');
+            }
+
+            clearError() {
+                document.getElementById('errorMsg').classList.remove('show');
+            }
+
+            clearForm() {
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('signupName').value = '';
+                document.getElementById('signupEmail').value = '';
+                document.getElementById('signupPassword').value = '';
+            }
+
+            showAuth() {
+                document.getElementById('authScreen').classList.remove('hidden');
+                document.getElementById('appContainer').classList.remove('active');
+                document.getElementById('loginMode').style.display = 'block';
+                document.getElementById('signupMode').style.display = 'none';
+            }
+
+            showApp() {
+                document.getElementById('authScreen').classList.add('hidden');
+                document.getElementById('appContainer').classList.add('active');
+                document.getElementById('userName').textContent = this.currentUser.name;
+                this.renderGames();
+            }
+
+            generateGames() {
+                this.games = [];
+                const today = new Date();
+                
+                // Generate games for next 8 weeks (Saturdays and Sundays)
+                for (let week = 0; week < 8; week++) {
+                    for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
+                        const date = new Date(today);
+                        date.setDate(date.getDate() + (week * 7) + dayOffset);
+                        
+                        const dayOfWeek = date.getDay();
+                        
+                        // Saturday (6) or Sunday (0)
+                        if (dayOfWeek === 6 || dayOfWeek === 0) {
+                            const gameId = 'game_' + date.getTime();
+                            
+                            // Create morning and evening games
+                            ['09:00 AM', '06:00 PM'].forEach((time, idx) => {
+                                this.games.push({
+                                    id: gameId + '_' + idx,
+                                    date: date.toISOString().split('T')[0],
+                                    dayName: date.toLocaleDateString('en-US', { weekday: 'long' }),
+                                    dateStr: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                                    time: time
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+
+            renderGames() {
+                const grid = document.getElementById('scheduleGrid');
+                grid.innerHTML = '';
+
+                this.games.forEach((game, idx) => {
+                    const card = document.createElement('div');
+                    card.className = 'game-card';
+                    card.style.animation = `fadeInScale 0.6s ease-out ${idx * 0.05}s both`;
+
+                    const gameDate = new Date(game.date);
+                    const stats = this.getGameStats(game.id);
+
+                    card.innerHTML = `
+                        <div class="game-header">
+                            <div>
+                                <div class="game-day">${game.dayName}</div>
+                                <div class="game-date">${game.dateStr}</div>
+                            </div>
+                            <div class="game-time">${game.time}</div>
+                        </div>
+
+                        <div class="game-stats">
+                            <div class="stat">
+                                <div class="stat-number">${stats.yes}</div>
+                                <div class="stat-label">Playing</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">${stats.maybe}</div>
+                                <div class="stat-label">Maybe</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">${stats.no}</div>
+                                <div class="stat-label">Not Playing</div>
+                            </div>
+                        </div>
+
+                        <div class="current-player-section">
+                            <div class="current-player-title">Your Status</div>
+                            <div class="player-status">
+                                <button class="status-option yes-option ${this.getPlayerStatus(game.id) === 'yes' ? 'active' : ''}" 
+                                    onclick="app.updateStatus('${game.id}', 'yes')">✓ Playing</button>
+                                <button class="status-option maybe-option ${this.getPlayerStatus(game.id) === 'maybe' ? 'active' : ''}" 
+                                    onclick="app.updateStatus('${game.id}', 'maybe')">? Maybe</button>
+                                <button class="status-option no-option ${this.getPlayerStatus(game.id) === 'no' ? 'active' : ''}" 
+                                    onclick="app.updateStatus('${game.id}', 'no')">✗ Not Playing</button>
+                            </div>
+                        </div>
+
+                        <div class="availability-section">
+                            <div class="availability-title">Player Availability</div>
+                            <div class="player-list" id="players-${game.id}">
+                                <!-- Players populated here -->
+                            </div>
+                        </div>
+                    `;
+
+                    grid.appendChild(card);
+                    this.renderPlayersForGame(game.id);
+                });
+            }
+
+            renderPlayersForGame(gameId) {
+                const playerListEl = document.getElementById(`players-${gameId}`);
+                
+                // Show a few sample players
+                const samplePlayers = [
+                    { id: 'p1', name: 'Alex Johnson' },
+                    { id: 'p2', name: 'Jordan Smith' },
+                    { id: 'p3', name: 'Casey Williams' },
+                    { id: 'p4', name: 'Morgan Davis' },
+                    { id: 'p5', name: 'Taylor Brown' }
+                ];
+
+                playerListEl.innerHTML = samplePlayers.map(player => {
+                    const status = this.getPlayerAvailability(gameId, player.id);
+                    let statusClass = 'available';
+                    let statusText = 'Available';
+                    
+                    if (status === 'no') {
+                        statusClass = 'unavailable';
+                        statusText = 'Not Available';
+                    } else if (status === 'maybe') {
+                        statusClass = 'maybe';
+                        statusText = 'Maybe';
+                    }
+
+                    return `
+                        <div class="player-item">
+                            <span class="player-name">${player.name}</span>
+                            <span class="availability-badge ${statusClass}">${statusText}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateStatus(gameId, status) {
+                if (!this.availabilities[gameId]) {
+                    this.availabilities[gameId] = {};
+                }
+                this.availabilities[gameId][this.currentUser.id] = status;
+                this.saveData();
+                this.renderGames();
+            }
+
+            getPlayerStatus(gameId) {
+                return this.availabilities[gameId]?.[this.currentUser.id] || null;
+            }
+
+            getPlayerAvailability(gameId, playerId) {
+                return this.availabilities[gameId]?.[playerId] || 'available';
+            }
+
+            getGameStats(gameId) {
+                const availabilities = this.availabilities[gameId] || {};
+                let yes = 0, no = 0, maybe = 0;
+
+                Object.values(availabilities).forEach(status => {
+                    if (status === 'yes') yes++;
+                    else if (status === 'no') no++;
+                    else if (status === 'maybe') maybe++;
+                });
+
+                return { yes, no, maybe };
+            }
+
+            refreshGames() {
+                this.renderGames();
+                alert('Schedule refreshed!');
+            }
+
+            saveData() {
+                localStorage.setItem('leagueAvailabilities', JSON.stringify(this.availabilities));
+                localStorage.setItem('leaguePlayers', JSON.stringify(this.players));
+            }
+
+            loadData() {
+                const savedAvailabilities = localStorage.getItem('leagueAvailabilities');
+                const savedPlayers = localStorage.getItem('leaguePlayers');
+                
+                if (savedAvailabilities) {
+                    this.availabilities = JSON.parse(savedAvailabilities);
+                }
+                
+                if (savedPlayers) {
+                    this.players = JSON.parse(savedPlayers);
+                } else {
+                    // Add sample players if none exist
+                    this.players = [
+                        { id: 'p1', name: 'Alex Johnson', email: 'alex@test.com', password: 'test1' },
+                        { id: 'p2', name: 'Jordan Smith', email: 'jordan@test.com', password: 'test2' },
+                        { id: 'p3', name: 'Casey Williams', email: 'casey@test.com', password: 'test3' }
+                    ];
+                }
+            }
+        }
+
+        const app = new LeagueApp();
+    </script>
+</body>
+</html>

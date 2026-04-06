@@ -1,0 +1,294 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                ║
+║                    🚀 LRD HEROKU DEPLOYMENT GUIDE 🚀                          ║
+║                                                                                ║
+║                       Complete Step-by-Step Instructions                       ║
+║                                                                                ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 QUICK SUMMARY
+
+  Time Required:      10 minutes
+  Difficulty:         Easy
+  Cost:               Free (optional upgrade to $5/month)
+  Public URL:         https://your-app-name.herokuapp.com
+  Status:             Ready to deploy!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 DEPLOYMENT CHECKLIST
+
+STEP 1: INSTALL TOOLS (5 min)
+  [ ] Heroku account created at heroku.com
+  [ ] Heroku CLI installed from devcenter.heroku.com/articles/heroku-cli
+  [ ] Git installed from git-scm.com
+  [ ] Verify: "heroku --version" and "git --version" both work
+
+STEP 2: PREPARE FILES (2 min)
+  [ ] Create folder: mkdir lrd-app && cd lrd-app
+  [ ] Create subfolder: mkdir public
+  [ ] Copy from /outputs/:
+      [ ] server.js → lrd-app/server.js
+      [ ] package.json → lrd-app/package.json
+      [ ] index.html → lrd-app/public/index.html
+      [ ] Procfile → lrd-app/Procfile
+      [ ] Create .env file with config below
+      [ ] Create .gitignore file (prevent committing secrets)
+
+STEP 3: INITIALIZE GIT (1 min)
+  [ ] git init
+  [ ] git add .
+  [ ] git commit -m "Initial commit - LRD"
+
+STEP 4: LOGIN TO HEROKU (1 min)
+  [ ] heroku login
+  [ ] Browser opens - log in with your email
+  [ ] Return to terminal when done
+
+STEP 5: CREATE HEROKU APP (1 min)
+  [ ] heroku create your-unique-app-name
+  [ ] Replace "your-unique-app-name" with something like: lrd-soccer-league
+  [ ] Heroku shows your public URL - save it!
+
+STEP 6: SET CONFIGURATION (2 min)
+  [ ] heroku config:set JWT_SECRET=$(openssl rand -base64 32)
+  [ ] heroku config:set PORT=3001
+  [ ] heroku config:set NODE_ENV=production
+  [ ] heroku config:set APP_URL=https://your-app-name.herokuapp.com
+  [ ] heroku config:set SMTP_HOST=smtp.gmail.com
+  [ ] heroku config:set SMTP_PORT=587
+  [ ] heroku config:set SMTP_USER=your-email@gmail.com
+  [ ] heroku config:set SMTP_PASS=your-app-password
+
+STEP 7: DEPLOY (1 min)
+  [ ] git push heroku main
+  [ ] Wait for "deployed to Heroku" message
+
+STEP 8: VERIFY (1 min)
+  [ ] heroku open
+  [ ] App should load in browser
+  [ ] Try signing up
+  [ ] Try uploading a photo
+
+STEP 9: CREATE ADMIN (optional)
+  [ ] Sign up as regular user
+  [ ] Run: heroku run "sqlite3 league.db \"UPDATE users SET role='admin' 
+      WHERE email='your@email.com'\""
+
+STEP 10: SHARE (instant)
+  [ ] Send public URL to your league
+  [ ] Players can now sign up!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 FILE STRUCTURE (IMPORTANT!)
+
+lrd-app/
+├── server.js               ← Copy from /outputs/
+├── package.json            ← Copy from /outputs/
+├── Procfile               ← Copy from /outputs/
+├── .env                   ← Create with config below
+├── .gitignore            ← Create to prevent committing secrets
+│
+└── public/                ← Create this folder!
+    └── index.html        ← Copy from /outputs/
+
+⚠️  IMPORTANT: index.html must be in public/ subfolder, not in root!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 .env FILE CONTENTS
+
+Create file: lrd-app/.env
+Add this content:
+
+  JWT_SECRET=auto-generated-by-heroku
+  PORT=3001
+  NODE_ENV=production
+  APP_URL=https://your-app-name.herokuapp.com
+  SMTP_HOST=smtp.gmail.com
+  SMTP_PORT=587
+  SMTP_SECURE=false
+  SMTP_USER=your-email@gmail.com
+  SMTP_PASS=your-app-password
+
+⚠️  DON'T COMMIT .env! Add to .gitignore!
+
+Gmail App Password Setup:
+1. Go to https://myaccount.google.com/apppasswords
+2. Select Mail and Windows Computer (or your OS)
+3. Google generates a password
+4. Use that password for SMTP_PASS
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 .gitignore FILE CONTENTS
+
+Create file: lrd-app/.gitignore
+Add this content:
+
+  # Don't commit secrets!
+  .env
+  .env.local
+  
+  # Don't commit dependencies
+  node_modules/
+  package-lock.json
+  
+  # Don't commit database
+  league.db
+  *.db
+  
+  # Don't commit user files
+  uploads/
+  
+  # Don't commit logs
+  *.log
+  npm-debug.log*
+  
+  # OS files
+  .DS_Store
+  Thumbs.db
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 COMMAND REFERENCE
+
+Login:
+  heroku login
+
+Create app:
+  heroku create your-app-name
+
+Set config:
+  heroku config:set KEY=VALUE
+
+Deploy:
+  git push heroku main
+
+View logs:
+  heroku logs --tail
+
+Open app:
+  heroku open
+
+Restart:
+  heroku restart
+
+Check status:
+  heroku status
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🐛 TROUBLESHOOTING
+
+ERROR: App won't start
+  → heroku logs --tail (shows error details)
+  → Check .env variables are set
+  → Verify Procfile exists and is correct
+
+ERROR: "Cannot find module"
+  → heroku run npm install
+  → git push heroku main
+
+ERROR: Email not sending
+  → Check SMTP config: heroku config | grep SMTP
+  → Verify Gmail app password
+  → Check logs: heroku logs --tail
+
+ERROR: Port already in use
+  → Change PORT in .env
+  → Run: heroku config:set PORT=5000
+
+ERROR: Database locked
+  → heroku run rm league.db
+  → heroku restart
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 IMPORTANT NOTES
+
+✅ PUBLIC URL
+   Your app will be at: https://your-app-name.herokuapp.com
+   
+✅ DATABASE
+   SQLite database (league.db) is auto-created
+   Players, games, availability all stored automatically
+   
+✅ FREE TIER
+   Free dyno app sleeps after 30 mins of inactivity
+   Just refresh browser to wake it (takes a few seconds)
+   
+✅ UPGRADE OPTION
+   For always-running app: heroku dyno:type eco ($5/month)
+   
+✅ NOTIFICATIONS
+   Thursday 6 PM reminder works automatically
+   Friday 8 PM confirmed players summary works automatically
+   Email required for notifications (Gmail with app password recommended)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 HELPFUL DOCUMENTS
+
+In /outputs/ folder you have:
+
+  HEROKU_QUICK_DEPLOY.md           → 10-minute quick guide
+  HEROKU_DEPLOYMENT_GUIDE.md       → Detailed step-by-step
+  FILE_STRUCTURE_GUIDE.md          → How to organize files
+  README_LRD.md                    → Project overview
+  QUICK_START.md                   → General quick start
+  API_REFERENCE.md                 → API documentation
+  FEATURES.md                      → Feature documentation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 AFTER DEPLOYMENT
+
+✅ Players sign up at: https://your-app-name.herokuapp.com
+✅ Create games as admin
+✅ Players mark availability
+✅ Notifications sent Friday 8 PM (all players with confirmed list)
+✅ Notifications sent Thursday 6 PM (to all players)
+✅ Admins get instant alerts when players change status
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🏆 SUMMARY
+
+Status:           ✅ READY TO DEPLOY
+Time Required:    10 minutes
+Difficulty:       Easy
+Cost:             Free (or $5+ upgrade)
+Public URL:       https://your-app-name.herokuapp.com
+Database:         Auto-created SQLite
+Notifications:    Automatic scheduling included
+Email:            Gmail/SendGrid/Mailgun supported
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 YOU'RE READY!
+
+1. Follow the checklist above
+2. Deploy in 10 minutes
+3. Share URL with your league
+4. Enjoy managing your games!
+
+For detailed instructions:
+→ Read HEROKU_QUICK_DEPLOY.md for 10-minute guide
+→ Read HEROKU_DEPLOYMENT_GUIDE.md for detailed walkthrough
+→ Read FILE_STRUCTURE_GUIDE.md for file organization help
+
+Questions?
+→ Check HEROKU_DEPLOYMENT_GUIDE.md troubleshooting section
+→ Run: heroku logs --tail (shows real-time errors)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Happy Deploying! ⚽🚀
+
+Your LRD app will be live in 10 minutes!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
